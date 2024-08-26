@@ -1,9 +1,10 @@
 
-export function App() {
+export const App = () => {
 
   return (
     <div>
-      <h1>OLA FRONT</h1>
+      <h1>Gerenciar Posts</h1>
     </div>
-  )
-}
+  );
+};
+

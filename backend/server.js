@@ -1,10 +1,13 @@
 import express from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import mysql from 'mysql2';
 
-
 const app = express()
 const port = 3000;
+app.use(cors());
+app.use(bodyParser.json())
+
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -19,10 +22,13 @@ db.connect((err) => {
 });
 
 app.get('/users', (req, res) => {
-    res.send('ola')
+    const { name, email } = req.body
+    const query = 'INSERT INTO users (name, email) VALUES (?, ?)';
+    db.query(query, [name, email], (result) =>  {
+        res.status(201).json({ id: result.insertId, name, email });
+    })
 })
 
-app.use(bodyParser.json())
 
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
