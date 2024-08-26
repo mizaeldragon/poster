@@ -18,7 +18,7 @@ const db = mysql.createPool({
 app.get('/posts', async (req, res) => {
     try {
       const result = await db.query('SELECT * FROM posts');
-      const rows = result[0]; // A primeira posição do array contém as linhas
+      const rows = result[0];
       res.json(rows);
     } catch (err) {
       console.error(err);
@@ -26,7 +26,7 @@ app.get('/posts', async (req, res) => {
     }
   });
   
-  // Rota para criar um novo post
+
   app.post('/posts', async (req, res) => {
     try {
       const { title, content, userId } = req.body;
@@ -41,18 +41,13 @@ app.get('/posts', async (req, res) => {
     }
   });
   
-  // Rota para atualizar um post
   app.put('/posts/:id', async (req, res) => {
     try {
       const { title, content } = req.body;
       const { id } = req.params;
-      const result = await db.query(
-        'UPDATE posts SET title = ?, content = ? WHERE id = ?',
+      await db.query('UPDATE posts SET title = ?, content = ? WHERE id = ?',
         [title, content, id]
       );
-      if (result[0].affectedRows === 0) {
-        return res.status(404).json({ error: 'Post não encontrado' });
-      }
       res.json({ status: 'Post atualizado' });
     } catch (err) {
       console.error(err);
@@ -60,14 +55,10 @@ app.get('/posts', async (req, res) => {
     }
   });
   
-  // Rota para deletar um post
   app.delete('/posts/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const result = await db.query('DELETE FROM posts WHERE id = ?', [id]);
-      if (result[0].affectedRows === 0) {
-        return res.status(404).json({ error: 'Post não encontrado' });
-      }
+      await db.query('DELETE FROM posts WHERE id = ?', [id]);
       res.json({ status: 'Post deletado' });
     } catch (err) {
       console.error(err);
