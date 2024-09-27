@@ -58,20 +58,20 @@ const App = () => {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
+          placeholder="Titulo"
           className="mb-4 text-white"
         />
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Content"
+          placeholder="Conteudo"
           className="text-white"
         />
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 hover:bg-blue-700 rounded mt-8 mb-12"
         >
-          {editPost ? "Update Post" : "Create Post"}
+          {editPost ? "Atualizar Poster" : "Criar Poster"}
         </button>
       </form>
       <ScrollArea className="h-[250px] w-[381px] -ml-1 rounded border-2 p-6 text-white">
