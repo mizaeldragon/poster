@@ -1,14 +1,9 @@
 {
-    "compilerOptions": {
-      // ...
-      "target": "es2020",
-      "baseUrl": ".",
-      "paths": {
-        "@/*": [
-          "./src/*"
-        ]
-      }
-      // ...
+  "compilerOptions": {
+    "target": "es2020",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
     }
   }
-  
+}

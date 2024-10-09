@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import mysql from "mysql2/promise";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = 3000;
@@ -66,6 +68,9 @@ app.delete("/posts/:id", async (req, res) => {
     res.status(500).json({ error: "Erro ao deletar post" });
   }
 });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "public")));
 
