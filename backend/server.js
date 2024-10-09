@@ -10,6 +10,15 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 const db = mysql.createPool({
   host: "localhost",
   user: "root",
@@ -67,15 +76,6 @@ app.delete("/posts/:id", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Erro ao deletar post" });
   }
-});
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(port, () => {
