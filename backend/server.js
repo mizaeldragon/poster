@@ -13,7 +13,7 @@ const app = express();
 const port = 5000;
 
 const corsOptions = {
-  origin: "https://seu-frontend.onrender.com",
+  origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   optionsSuccessStatus: 200,
 };
