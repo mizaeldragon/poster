@@ -10,10 +10,10 @@ const { Pool } = pkg;
 dotenv.config();
 
 const app = express();
-const port = 5000;
+const port = 3000;
 
 const corsOptions = {
-  origin: "http://localhost:5000",
+  origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"],
   optionsSuccessStatus: 200,
 };
