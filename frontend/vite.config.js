@@ -10,7 +10,14 @@ export default defineConfig({
     },
   },
   server: {
-    host: "0.0.0.0", // Faz o Vite escutar em todas as interfaces
-    port: process.env.PORT || 5173, // Usa a variável de ambiente PORT ou o padrão 5173
+    host: "0.0.0.0",
+    port: process.env.PORT || 5173,
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
 });
