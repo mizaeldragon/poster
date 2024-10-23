@@ -15,28 +15,37 @@ const App = () => {
   }, []);
 
   const fetchPosts = async () => {
-    const response = await axios.get("http://localhost:3000/posts");
-    setPosts(response.data);
+    try {
+      const response = await axios.get("http://localhost:5000/posts");
+      setPosts(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      setPosts([]);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editPost) {
-      await axios.put(`http://localhost:3000/posts/${editPost}`, {
-        title,
-        content,
-      });
-    } else {
-      await axios.post("http://localhost:3000/posts", {
-        title,
-        content,
-        userId: 1,
-      });
+    try {
+      if (editPost) {
+        await axios.put(`http://localhost:5000/posts/${editPost}`, {
+          title,
+          content,
+        });
+      } else {
+        await axios.post("http://localhost:5000/posts", {
+          title,
+          content,
+          userId: 1,
+        });
+      }
+      fetchPosts();
+      setTitle("");
+      setContent("");
+      setEditPost(null);
+    } catch (error) {
+      console.error("Error submitting post:", error);
     }
-    fetchPosts();
-    setTitle("");
-    setContent("");
-    setEditPost(null);
   };
 
   const handleEdit = (post) => {
@@ -46,7 +55,7 @@ const App = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:3000/posts/${id}`);
+    await axios.delete(`http://localhost:5000/posts/${id}`);
     fetchPosts();
   };
 
@@ -75,24 +84,28 @@ const App = () => {
         </button>
       </form>
       <ScrollArea className="h-[250px] w-[381px] -ml-1 rounded border-2 p-6 text-white">
-        {posts.map((post) => (
-          <div key={post.id} className="border p-4 mb-4 rounded">
-            <h2 className="text-xl font-bold">{post.title}</h2>
-            <p>{post.content}</p>
-            <button
-              onClick={() => handleEdit(post)}
-              className="text-green-500 mr-2"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => handleDelete(post.id)}
-              className="text-red-500"
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+        {Array.isArray(posts) && posts.length > 0 ? (
+          posts.map((post) => (
+            <div key={post.id} className="border p-4 mb-4 rounded">
+              <h2 className="text-xl font-bold">{post.title}</h2>
+              <p>{post.content}</p>
+              <button
+                onClick={() => handleEdit(post)}
+                className="text-green-500 mr-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(post.id)}
+                className="text-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          ))
+        ) : (
+          <p>No posts available.</p>
+        )}
       </ScrollArea>
     </div>
   );

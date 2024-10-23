@@ -1,36 +1,45 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
-import mysql from "mysql2/promise";
+import pkg from "pg";
 import path from "path";
 import { fileURLToPath } from "url";
 
+const { Pool } = pkg;
+
 const app = express();
-const port = 3000;
-app.use(cors());
-app.use(bodyParser.json());
+const port = 5000;
+
+const corsOptions = {
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
+app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+const pool = new Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "poster",
+  password: "ml271022",
 });
 
-const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "alpha06",
-  database: "poster",
-});
+pool
+  .connect()
+  .then(() => console.log("Conectado ao PostgreSQL"))
+  .catch((err) => console.error("Erro ao conectar ao PostgreSQL:", err));
 
 app.get("/posts", async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM posts");
-    const rows = result[0];
-    res.json(rows);
+    const result = await pool.query("SELECT * FROM posts");
+    res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao obter posts" });
@@ -40,11 +49,11 @@ app.get("/posts", async (req, res) => {
 app.post("/posts", async (req, res) => {
   try {
     const { title, content, userId } = req.body;
-    const result = await db.query(
-      "INSERT INTO posts (title, content, user_id) VALUES (?, ?, ?)",
+    const result = await pool.query(
+      "INSERT INTO posts (title, content, user_id) VALUES ($1, $2, $3) RETURNING id",
       [title, content, userId]
     );
-    res.json({ id: result[0].insertId });
+    res.json({ id: result.rows[0].id });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao criar post" });
@@ -55,11 +64,10 @@ app.put("/posts/:id", async (req, res) => {
   try {
     const { title, content } = req.body;
     const { id } = req.params;
-    await db.query("UPDATE posts SET title = ?, content = ? WHERE id = ?", [
-      title,
-      content,
-      id,
-    ]);
+    await pool.query(
+      "UPDATE posts SET title = $1, content = $2 WHERE id = $3",
+      [title, content, id]
+    );
     res.json({ status: "Post atualizado" });
   } catch (err) {
     console.error(err);
@@ -70,12 +78,16 @@ app.put("/posts/:id", async (req, res) => {
 app.delete("/posts/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    await db.query("DELETE FROM posts WHERE id = ?", [id]);
+    await pool.query("DELETE FROM posts WHERE id = $1", [id]);
     res.json({ status: "Post deletado" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Erro ao deletar post" });
   }
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(port, () => {
