@@ -33,9 +33,7 @@ const pool = new Pool({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: process.env.POSTGRES_PORT,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false,
 });
 
 pool
