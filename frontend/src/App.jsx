@@ -57,8 +57,14 @@ const App = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`https://poster-we5k.onrender.com/posts/${id}`);
-    fetchPosts();
+    if (window.confirm("Tem certeza que deseja deletar este post?")) {
+      try {
+        await axios.delete(`https://poster-we5k.onrender.com/posts/${id}`);
+        fetchPosts();
+      } catch (error) {
+        console.error("Erro ao deletar post:", error);
+      }
+    }
   };
 
   return (
