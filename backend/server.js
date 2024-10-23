@@ -45,7 +45,7 @@ pool
   .then(() => console.log("Conectado ao PostgreSQL"))
   .catch((err) => console.error("Erro ao conectar ao PostgreSQL:", err));
 
-app.get("/posts", async (req, res) => {
+app.get("/post", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM posts");
     res.json(result.rows);
@@ -55,7 +55,7 @@ app.get("/posts", async (req, res) => {
   }
 });
 
-app.post("/posts", async (req, res) => {
+app.post("/post", async (req, res) => {
   try {
     const { title, content, userId } = req.body;
     const result = await pool.query(
@@ -69,7 +69,7 @@ app.post("/posts", async (req, res) => {
   }
 });
 
-app.put("/posts/:id", async (req, res) => {
+app.put("/post/:id", async (req, res) => {
   try {
     const { title, content } = req.body;
     const { id } = req.params;
@@ -84,7 +84,7 @@ app.put("/posts/:id", async (req, res) => {
   }
 });
 
-app.delete("/posts/:id", async (req, res) => {
+app.delete("/post/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query("DELETE FROM posts WHERE id = $1", [id]);

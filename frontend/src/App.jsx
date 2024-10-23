@@ -16,9 +16,7 @@ const App = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(
-        "https://poster-we5k.onrender.com/posts"
-      );
+      const response = await axios.get("https://poster-we5k.onrender.com/post");
       setPosts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -30,12 +28,12 @@ const App = () => {
     e.preventDefault();
     try {
       if (editPost) {
-        await axios.put(`https://poster-we5k.onrender.com/posts/${editPost}`, {
+        await axios.put(`https://poster-we5k.onrender.com/post/${editPost}`, {
           title,
           content,
         });
       } else {
-        await axios.post("https://poster-we5k.onrender.com/posts", {
+        await axios.post("https://poster-we5k.onrender.com/post", {
           title,
           content,
           userId: 1,
@@ -59,7 +57,7 @@ const App = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja deletar este post?")) {
       try {
-        await axios.delete(`https://poster-we5k.onrender.com/posts/${id}`);
+        await axios.delete(`https://poster-we5k.onrender.com/post/${id}`);
         fetchPosts();
       } catch (error) {
         console.error("Erro ao deletar post:", error);
