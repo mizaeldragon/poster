@@ -13,10 +13,12 @@ const app = express();
 const port = 3000;
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || "*",
+  origin: ["http://localhost:5173", "https://poster-we5k.onrender.com"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   optionsSuccessStatus: 200,
 };
+
+app.options("*", cors(corsOptions));
 
 app.use(cors(corsOptions));
 
