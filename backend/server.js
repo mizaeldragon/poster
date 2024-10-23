@@ -13,7 +13,7 @@ const app = express();
 const port = 3000;
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || "*",
+  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   optionsSuccessStatus: 200,
 };
@@ -34,8 +34,10 @@ const pool = new Pool({
   host: process.env.PG_HOST,
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
-  port: process.env.POSTGRES_PORT,
-  ssl: false,
+  port: process.env.PG_PORT,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 pool
