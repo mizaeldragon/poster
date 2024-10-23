@@ -14,6 +14,8 @@ const App = () => {
     fetchPosts();
   }, []);
 
+  axios.defaults.baseURL = "https://poster-we5k.onrender.com";
+
   const fetchPosts = async () => {
     try {
       const response = await axios.get("/posts");
