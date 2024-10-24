@@ -10,7 +10,7 @@ const { Pool } = pkg;
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PG_PORT || 3000;
 
 const corsOptions = {
   origin: process.env.CORS_ORIGIN || "http://localhost:5173",
