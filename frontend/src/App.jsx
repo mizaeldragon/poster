@@ -9,6 +9,7 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [editPost, setEditPost] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchPosts();
@@ -16,11 +17,14 @@ const App = () => {
 
   const fetchPosts = async () => {
     try {
+      setLoading(true);
       const response = await axios.get("https://poster-we5k.onrender.com/post");
       setPosts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Erro ao buscar posts:", error);
       setPosts([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,7 +48,7 @@ const App = () => {
       setContent("");
       setEditPost(null);
     } catch (error) {
-      console.error("Error submitting post:", error);
+      console.error("Erro ao enviar post:", error);
     }
   };
 
@@ -66,7 +70,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col bg-gradient-to-r to-zinc-700 from-slate-950 w-full h-screen ">
+    <div className="flex justify-center items-center flex-col bg-gradient-to-r to-zinc-700 from-slate-950 w-full h-screen">
       <h1 className="text-5xl font-bold mb-12 text-white">Posts</h1>
       <form onSubmit={handleSubmit} className="mb-4 w-96">
         <Input
@@ -75,22 +79,27 @@ const App = () => {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Titulo"
           className="mb-4 text-white"
+          required
         />
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Conteudo"
           className="text-white"
+          required
         />
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 hover:bg-blue-700 rounded mt-8 mb-12"
+          disabled={!title || !content}
         >
           {editPost ? "Atualizar Poster" : "Criar Poster"}
         </button>
       </form>
       <ScrollArea className="h-[250px] w-[381px] -ml-1 rounded border-2 p-6 text-white">
-        {Array.isArray(posts) && posts.length > 0 ? (
+        {loading ? (
+          <p>Carregando posts...</p>
+        ) : posts.length > 0 ? (
           posts.map((post) => (
             <div key={post.id} className="border p-4 mb-4 rounded">
               <h2 className="text-xl font-bold">{post.title}</h2>
@@ -99,18 +108,18 @@ const App = () => {
                 onClick={() => handleEdit(post)}
                 className="text-green-500 mr-2"
               >
-                Edit
+                Editar
               </button>
               <button
                 onClick={() => handleDelete(post.id)}
                 className="text-red-500"
               >
-                Delete
+                Deletar
               </button>
             </div>
           ))
         ) : (
-          <p>No posts available.</p>
+          <p>Nenhum post disponível.</p>
         )}
       </ScrollArea>
     </div>
