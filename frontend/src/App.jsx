@@ -19,6 +19,7 @@ const App = () => {
     try {
       setLoading(true);
       const response = await axios.get("https://poster-we5k.onrender.com/post");
+      console.log("Dados recebidos:", response.data);
       setPosts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Erro ao buscar posts:", error);
@@ -90,7 +91,11 @@ const App = () => {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 hover:bg-blue-700 rounded mt-8 mb-12"
+          className={`p-2 rounded mt-8 mb-12 ${
+            !title || !content
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700"
+          } text-white`}
           disabled={!title || !content}
         >
           {editPost ? "Atualizar Poster" : "Criar Poster"}
@@ -98,8 +103,8 @@ const App = () => {
       </form>
       <ScrollArea className="h-[250px] w-[381px] -ml-1 rounded border-2 p-6 text-white">
         {loading ? (
-          <p>Carregando posts...</p>
-        ) : posts.length > 0 ? (
+          <p className="text-center text-white">Carregando posts...</p>
+        ) : Array.isArray(posts) && posts.length > 0 ? (
           posts.map((post) => (
             <div key={post.id} className="border p-4 mb-4 rounded">
               <h2 className="text-xl font-bold">{post.title}</h2>
@@ -119,7 +124,7 @@ const App = () => {
             </div>
           ))
         ) : (
-          <p>Nenhum post disponível.</p>
+          <p className="text-center text-white">Nenhum post disponível.</p>
         )}
       </ScrollArea>
     </div>
