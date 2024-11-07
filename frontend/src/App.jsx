@@ -15,10 +15,12 @@ const App = () => {
     fetchPosts();
   }, []);
 
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://poster-we5k.onrender.com/post");
+      const response = await axios.get(`${apiUrl}/post`);
       console.log("Dados recebidos:", response.data);
       setPosts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -33,12 +35,12 @@ const App = () => {
     e.preventDefault();
     try {
       if (editPost) {
-        await axios.put(`https://poster-we5k.onrender.com/post/${editPost}`, {
+        await axios.put(`${apiUrl}/post/${editPost}`, {
           title,
           content,
         });
       } else {
-        await axios.post("https://poster-we5k.onrender.com/post", {
+        await axios.post(`${apiUrl}/post`, {
           title,
           content,
           userId: 1,
@@ -62,7 +64,7 @@ const App = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja deletar este post?")) {
       try {
-        await axios.delete(`https://poster-we5k.onrender.com/post/${id}`);
+        await axios.delete(`${apiUrl}/post/${id}`);
         fetchPosts();
       } catch (error) {
         console.error("Erro ao deletar post:", error);

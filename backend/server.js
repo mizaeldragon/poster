@@ -19,15 +19,14 @@ const corsOptions = {
 };
 
 app.options("*", cors(corsOptions));
-
 app.use(cors(corsOptions));
-
 app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, "public")));
+// Serve arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -41,7 +40,7 @@ pool
   .then(() => console.log("Conectado ao PostgreSQL"))
   .catch((err) => console.error("Erro ao conectar ao PostgreSQL:", err));
 
-app.get("/post", async (req, res) => {
+app.get("/api/post", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM posts");
     res.json(result.rows);
@@ -51,7 +50,7 @@ app.get("/post", async (req, res) => {
   }
 });
 
-app.post("/post", async (req, res) => {
+app.post("/api/post", async (req, res) => {
   try {
     const { title, content, userId } = req.body;
     const result = await pool.query(
@@ -65,7 +64,7 @@ app.post("/post", async (req, res) => {
   }
 });
 
-app.put("/post/:id", async (req, res) => {
+app.put("/api/post/:id", async (req, res) => {
   try {
     const { title, content } = req.body;
     const { id } = req.params;
@@ -80,7 +79,7 @@ app.put("/post/:id", async (req, res) => {
   }
 });
 
-app.delete("/post/:id", async (req, res) => {
+app.delete("/api/post/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query("DELETE FROM posts WHERE id = $1", [id]);
@@ -91,8 +90,9 @@ app.delete("/post/:id", async (req, res) => {
   }
 });
 
+// Rota para servir o frontend no modo de produção
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 app.listen(port, () => {
