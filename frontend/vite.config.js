@@ -1,15 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
   build: {
-    outDir: "dist",
+    outDir: "dist", // Confirma que o build será gerado no diretório 'dist'
+  },
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000", // Caso queira testes locais com o backend
+    },
   },
 });
