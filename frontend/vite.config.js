@@ -9,6 +9,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  extensions: [".js", ".jsx", ".json"],
   build: {
     outDir: "dist",
   },
