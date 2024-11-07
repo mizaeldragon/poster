@@ -6,70 +6,71 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const App = () => {
   const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [editPost, setEditPost] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [titulo, setTitulo] = useState("");
+  const [conteudo, setConteudo] = useState("");
+  const [editarPost, setEditarPost] = useState(null);
+  const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    fetchPosts();
+    buscarPosts();
   }, []);
 
-  // const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-
-  const fetchPosts = async () => {
+  const buscarPosts = async () => {
     try {
-      setLoading(true);
-      const response = await axios.get(
+      setCarregando(true);
+      const resposta = await axios.get(
         "https://poster-rose.vercel.app/api/post"
       );
-      console.log("Dados recebidos:", response.data);
-      setPosts(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error("Erro ao buscar posts:", error);
+      console.log("Dados recebidos:", resposta.data);
+      setPosts(Array.isArray(resposta.data) ? resposta.data : []);
+    } catch (erro) {
+      console.error("Erro ao buscar posts:", erro);
       setPosts([]);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editPost) {
-        await axios.put(`https://poster-rose.vercel.app/api/post/${editPost}`, {
-          title,
-          content,
-        });
+      if (editarPost) {
+        await axios.put(
+          `https://poster-rose.vercel.app/api/post/${editarPost}`,
+          {
+            title: titulo,
+            content: conteudo,
+          }
+        );
       } else {
         await axios.post("https://poster-rose.vercel.app/api/post", {
-          title,
-          content,
+          title: titulo,
+          content: conteudo,
           userId: 1,
         });
       }
-      fetchPosts();
-      setTitle("");
-      setContent("");
-      setEditPost(null);
-    } catch (error) {
-      console.error("Erro ao enviar post:", error);
+      buscarPosts();
+      setTitulo("");
+      setConteudo("");
+      setEditarPost(null);
+    } catch (erro) {
+      console.error("Erro ao enviar post:", erro);
     }
   };
 
   const handleEdit = (post) => {
-    setTitle(post.title);
-    setContent(post.content);
-    setEditPost(post.id);
+    setTitulo(post.title);
+    setConteudo(post.content);
+    setEditarPost(post.id);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja deletar este post?")) {
       try {
         await axios.delete(`https://poster-rose.vercel.app/api/post/${id}`);
-        fetchPosts();
-      } catch (error) {
-        console.error("Erro ao deletar post:", error);
+        buscarPosts();
+      } catch (erro) {
+        console.error("Erro ao deletar post:", erro);
       }
     }
   };
@@ -80,33 +81,33 @@ const App = () => {
       <form onSubmit={handleSubmit} className="mb-4 w-96">
         <Input
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Titulo"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+          placeholder="Título"
           className="mb-4 text-white"
           required
         />
         <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Conteudo"
+          value={conteudo}
+          onChange={(e) => setConteudo(e.target.value)}
+          placeholder="Conteúdo"
           className="text-white"
           required
         />
         <button
           type="submit"
           className={`p-2 rounded mt-8 mb-12 ${
-            !title || !content
+            !titulo || !conteudo
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-700"
           } text-white`}
-          disabled={!title || !content}
+          disabled={!titulo || !conteudo}
         >
-          {editPost ? "Atualizar Poster" : "Criar Poster"}
+          {editarPost ? "Atualizar Post" : "Criar Post"}
         </button>
       </form>
       <ScrollArea className="h-[250px] w-[381px] -ml-1 rounded border-2 p-6 text-white">
-        {loading ? (
+        {carregando ? (
           <p className="text-center text-white">Carregando posts...</p>
         ) : Array.isArray(posts) && posts.length > 0 ? (
           posts.map((post) => (
