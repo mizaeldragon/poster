@@ -11,7 +11,7 @@ export default defineConfig({
   },
   extensions: [".js", ".jsx", ".json"],
   build: {
-    outDir: "dist",
+    outDir: "/dist",
   },
   server: {
     proxy: {
