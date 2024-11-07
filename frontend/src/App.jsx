@@ -20,7 +20,9 @@ const App = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${apiUrl}/post`);
+      const response = await axios.get(
+        "https://poster-rose.vercel.app/api/post"
+      );
       console.log("Dados recebidos:", response.data);
       setPosts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -35,12 +37,12 @@ const App = () => {
     e.preventDefault();
     try {
       if (editPost) {
-        await axios.put(`${apiUrl}/post/${editPost}`, {
+        await axios.put(`https://poster-rose.vercel.app/api/post/${editPost}`, {
           title,
           content,
         });
       } else {
-        await axios.post(`${apiUrl}/post`, {
+        await axios.post("https://poster-rose.vercel.app/api/post", {
           title,
           content,
           userId: 1,
@@ -64,7 +66,7 @@ const App = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja deletar este post?")) {
       try {
-        await axios.delete(`${apiUrl}/post/${id}`);
+        await axios.delete(`https://poster-rose.vercel.app/api/post/${id}`);
         fetchPosts();
       } catch (error) {
         console.error("Erro ao deletar post:", error);
